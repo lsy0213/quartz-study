@@ -3,7 +3,36 @@
 // Miku 模型来源: npm 包 live2d-widget-model-miku
 
 const OML2D_CDN = "https://cdn.jsdelivr.net/npm/oh-my-live2d@latest/dist/index.min.js"
-const MIKU_MODEL = "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json"
+
+// ============================================================
+//  模型库 — 想换哪一个,就把下面 MODELS 数组里的项重新排列/筛选
+//  数组里所有模型会形成"切换队列",点 Live2D 的 ✨ 切换按钮可以循环换装
+//  只想固定一个? 删掉其它,只保留一个即可
+// ============================================================
+const MODELS = [
+  {
+    name: "Miku - 初音未来",
+    path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json",
+    scale: 0.32,
+    position: [0, 60] as [number, number],
+  },
+  // 其它备选模型(默认注释掉,需要时打开)
+  // {
+  //   name: "Shizuku - 校园女孩",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+  //   scale: 0.18, position: [0, 30] as [number, number],
+  // },
+  // {
+  //   name: "Hibiki - 双马尾少女",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json",
+  //   scale: 0.5, position: [0, 50] as [number, number],
+  // },
+  // {
+  //   name: "Wanko - 柴犬",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-wanko@1.0.5/assets/wanko.model.json",
+  //   scale: 0.6, position: [0, 80] as [number, number],
+  // },
+]
 
 let scriptLoaded = false
 let widgetInitialized = false
@@ -16,21 +45,20 @@ function initWidget() {
 
   // @ts-ignore
   OML2D.loadOml2d({
-    // 模型: 固定为 Miku
-    models: [
-      {
-        path: MIKU_MODEL,
-        scale: 0.16,
-        position: [0, 60],
-        stageStyle: { width: 280, height: 320 },
-      },
-    ],
+    // 模型清单 (顶部 MODELS 数组)
+    models: MODELS,
     // 浮动位置: 左下角
     dockedPosition: "left",
     docked: false,
+    // 舞台容器:决定看板娘所占的空间(放大整体显示区域)
+    sayHello: false,
+    stageStyle: {
+      width: 380,
+      height: 460,
+    },
     // 移动端隐藏 (避免挡住内容)
     mobileDisplay: false,
-    // 关闭欢迎语 toast 防止打扰
+    // 闲置鼓励语
     tips: {
       idleTips: {
         message: ["今天也要加油学习哦~", "记得多复习闪卡！", "保持节奏，每天前进一点点。"],
@@ -41,13 +69,6 @@ function initWidget() {
         message: { daytime: "欢迎回来", night: "夜深了,注意休息" },
       },
     },
-    // 工具栏: 仅保留隐藏按钮
-    menus: {
-      disable: false,
-      items: ["Hidden"],
-    },
-    // Logo/品牌信息隐藏,更干净
-    statusBar: { disable: true },
     // 父容器: 挂到 documentElement 而不是 body, SPA 导航时不被清除
     parentElement: document.documentElement,
   })
