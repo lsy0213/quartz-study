@@ -13,8 +13,9 @@ const MODELS = [
   {
     name: "Miku - 初音未来",
     path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json",
-    scale: 0.32,
-    position: [0, 60] as [number, number],
+    scale: 0.24,
+    position: [0, 40] as [number, number],
+    draggable: true,           // 可拖动到任意位置
   },
   // 其它备选模型(默认注释掉,需要时打开)
   // {
@@ -50,12 +51,14 @@ function initWidget() {
     // 浮动位置: 左下角
     dockedPosition: "left",
     docked: false,
-    // 舞台容器:决定看板娘所占的空间(放大整体显示区域)
+    // 舞台容器:缩小一点,避免挡住左侧文件列表
     sayHello: false,
     stageStyle: {
-      width: 380,
-      height: 460,
+      width: 300,
+      height: 380,
     },
+    // 全局允许拖拽
+    transitionTime: 300,
     // 移动端隐藏 (避免挡住内容)
     mobileDisplay: false,
     // 闲置鼓励语
