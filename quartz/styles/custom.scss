@@ -1,0 +1,313 @@
+@use "./base.scss";
+
+// ========================================================
+//  siy 的学习指挥台 - 自定义样式
+//  设计语言: 温暖、复古、有质感
+// ========================================================
+
+// ---- 1. 全站文字与可读性 ----
+:root {
+  --serif: "LXGW WenKai TC", "Noto Serif SC", Georgia, serif;
+  --sans: "Noto Sans SC", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  letter-spacing: 0.01em;
+}
+
+article {
+  line-height: 1.85;            // 加大行高,长文阅读更舒服
+  font-size: 16px;
+
+  p {
+    margin: 1em 0;
+  }
+}
+
+// ---- 2. 标题:用霞鹜文楷,带左侧装饰条 ----
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+article h1 {
+  font-size: 2.2rem;
+  border-bottom: 2px solid var(--secondary);
+  padding-bottom: 0.4em;
+  margin-bottom: 1em;
+}
+
+article h2 {
+  font-size: 1.6rem;
+  margin-top: 2em;
+  padding-left: 0.6em;
+  border-left: 4px solid var(--secondary);
+  background: linear-gradient(90deg, var(--highlight) 0%, transparent 80%);
+  border-radius: 0 4px 4px 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+article h3 {
+  font-size: 1.3rem;
+  margin-top: 1.6em;
+  color: var(--secondary);
+
+  &::before {
+    content: "# ";
+    color: var(--tertiary);
+    opacity: 0.6;
+  }
+}
+
+// ---- 3. 顶部页面标题 ----
+.page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+// ---- 4. 链接:复古下划线效果 ----
+article a:not(.internal) {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--tertiary);
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--tertiary);
+    border-bottom-style: solid;
+    background: var(--highlight);
+  }
+}
+
+// 内部 wikilink 样式
+a.internal {
+  background: var(--highlight);
+  padding: 0.05em 0.4em;
+  border-radius: 0.3em;
+  color: var(--secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500;
+
+  &:hover {
+    background: var(--tertiary);
+    color: var(--light) !important;
+  }
+}
+
+// ---- 5. 引用块:复古信纸感 ----
+blockquote {
+  border-left: 4px solid var(--tertiary);
+  background: var(--highlight);
+  padding: 0.8em 1.2em;
+  margin: 1.2em 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--darkgray);
+  font-style: normal;
+  position: relative;
+
+  &::before {
+    content: "\201C";
+    position: absolute;
+    top: -0.3em;
+    left: 0.3em;
+    font-size: 2.5em;
+    color: var(--tertiary);
+    opacity: 0.25;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  p {
+    margin: 0.4em 0;
+    padding-left: 0.5em;
+  }
+}
+
+// ---- 6. 代码块:柔和背景 + 微阴影 ----
+code {
+  background: var(--highlight);
+  padding: 0.15em 0.45em;
+  border-radius: 0.3em;
+  font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  color: var(--secondary);
+}
+
+pre {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 1em 1.2em !important;
+  overflow-x: auto;
+
+  code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+}
+
+// ---- 7. 表格:杂志风 ----
+table {
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  th {
+    background: var(--secondary);
+    color: var(--light);
+    font-weight: 600;
+    padding: 0.7em 1em;
+    text-align: left;
+    font-family: var(--serif);
+  }
+
+  td {
+    padding: 0.6em 1em;
+    border-bottom: 1px solid var(--lightgray);
+  }
+
+  tr:nth-child(even) {
+    background: var(--highlight);
+  }
+
+  tr:hover {
+    background: rgba(201, 123, 90, 0.08);
+  }
+}
+
+// ---- 8. 列表:更精致的项目符号 ----
+ul li::marker {
+  color: var(--tertiary);
+}
+
+ol li::marker {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+// ---- 9. 任务列表的复选框 ----
+.contains-task-list {
+  list-style: none;
+  padding-left: 0.5em;
+
+  li {
+    padding: 0.1em 0;
+  }
+}
+
+// ---- 10. 图片:圆角 + 阴影 ----
+article img {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  margin: 1em auto;
+  display: block;
+}
+
+// ---- 11. 分隔线 ----
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lightgray) 30%, var(--lightgray) 70%, transparent);
+  margin: 2.5em 0;
+}
+
+// ---- 12. 侧栏标题(目录、反链、图谱等) ----
+.sidebar > .left, .sidebar > .right {
+  h2 {
+    font-family: var(--serif);
+    border: none;
+    background: none;
+    padding-left: 0;
+    color: var(--darkgray);
+  }
+}
+
+// ---- 13. 反链卡片 ----
+.backlinks ul li a {
+  background: var(--highlight);
+  padding: 0.4em 0.7em;
+  border-radius: 0.4em;
+  display: block;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--tertiary);
+    color: var(--light) !important;
+    transform: translateX(3px);
+  }
+}
+
+// ---- 14. 关系图谱容器 ----
+.graph-outer {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--lightgray);
+}
+
+// ---- 15. 卡片(目录、popover 等)统一圆角 ----
+.popover-inner {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid var(--lightgray) !important;
+}
+
+// ---- 16. 首页 callouts 样式增强 ----
+.callout {
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+// ---- 17. 搜索框 ----
+.search input {
+  border-radius: 8px;
+  border: 1.5px solid var(--lightgray);
+  font-family: var(--sans);
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px var(--highlight);
+  }
+}
+
+// ---- 18. 选中文字的颜色 ----
+::selection {
+  background: var(--secondary);
+  color: var(--light);
+}
+
+// ---- 19. 暗色模式微调 ----
+[saved-theme="dark"] {
+  article a:not(.internal) {
+    border-bottom-color: var(--secondary);
+  }
+
+  pre {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  table {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// ---- 20. 移动端响应式微调 ----
+@media (max-width: 768px) {
+  article {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  article h1 { font-size: 1.8rem; }
+  article h2 { font-size: 1.4rem; }
+  article h3 { font-size: 1.15rem; }
+}
