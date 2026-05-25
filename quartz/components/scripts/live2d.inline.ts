@@ -1,67 +1,159 @@
-// Live2D 看板娘 - 固定初音未来模型 + 跨页面持久化
-// 基于 oh-my-live2d (更现代的封装,支持指定单一模型)
-// Miku 模型来源: npm 包 live2d-widget-model-miku
+// Live2D 看板娘 - 精美装扮模型 + 手动拖拽 + 位置记忆
+// 基于 oh-my-live2d
 
 const OML2D_CDN = "https://cdn.jsdelivr.net/npm/oh-my-live2d@latest/dist/index.min.js"
 
 // ============================================================
-//  模型库 — 想换哪一个,就把下面 MODELS 数组里的项重新排列/筛选
-//  数组里所有模型会形成"切换队列",点 Live2D 的 ✨ 切换按钮可以循环换装
-//  只想固定一个? 删掉其它,只保留一个即可
+//  模型库 — 第一个是默认模型,如果配多个会出现切换按钮
+//  当前选用 chitose (黑发学院风) - 比 Miku 装扮更精细
 // ============================================================
 const MODELS = [
   {
-    name: "Miku - 初音未来",
-    path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json",
-    scale: 0.24,
-    position: [0, 40] as [number, number],
-    draggable: true,           // 可拖动到任意位置
+    name: "Chitose - 黑发学院",
+    path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json",
+    scale: 0.5,
+    position: [0, 50] as [number, number],
   },
-  // 其它备选模型(默认注释掉,需要时打开)
+  // 备选模型 - 想换就把当前模型注释掉、把想要的取消注释
   // {
-  //   name: "Shizuku - 校园女孩",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
-  //   scale: 0.18, position: [0, 30] as [number, number],
+  //   name: "Epsilon - 银发机娘",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-epsilon2_1@1.0.5/assets/Epsilon2.1.model.json",
+  //   scale: 0.6, position: [0, 60] as [number, number],
   // },
   // {
-  //   name: "Hibiki - 双马尾少女",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-hibiki@1.0.5/assets/hibiki.model.json",
+  //   name: "Miku - 初音未来",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json",
+  //   scale: 0.24, position: [0, 40] as [number, number],
+  // },
+  // {
+  //   name: "Haru - 白发猫耳",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-haru@1.0.5/assets/haru01.model.json",
+  //   scale: 0.5, position: [0, 60] as [number, number],
+  // },
+  // {
+  //   name: "Nietzsche - 哲学少女",
+  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-nietzsche@1.0.5/assets/nietzsche.model.json",
   //   scale: 0.5, position: [0, 50] as [number, number],
-  // },
-  // {
-  //   name: "Wanko - 柴犬",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-wanko@1.0.5/assets/wanko.model.json",
-  //   scale: 0.6, position: [0, 80] as [number, number],
   // },
 ]
 
+const POS_STORAGE_KEY = "live2d-position"
+
 let scriptLoaded = false
 let widgetInitialized = false
+let dragSetupDone = false
+
+function setupDrag() {
+  if (dragSetupDone) return
+
+  // oh-my-live2d 异步挂载,需要轮询等容器出现
+  const findContainer = (): HTMLElement | null => {
+    return (
+      document.querySelector("#oml2d-stage") ||
+      document.querySelector(".oml2d-stage") ||
+      document.querySelector("#oml2d") ||
+      document.querySelector(".oml2d") ||
+      document.querySelector("[data-oml2d-container]")
+    ) as HTMLElement | null
+  }
+
+  let attempts = 0
+  const tryAttach = () => {
+    const container = findContainer()
+    if (!container) {
+      attempts++
+      if (attempts < 40) setTimeout(tryAttach, 250)
+      return
+    }
+
+    dragSetupDone = true
+
+    // 恢复保存的位置
+    try {
+      const saved = localStorage.getItem(POS_STORAGE_KEY)
+      if (saved) {
+        const pos = JSON.parse(saved)
+        container.style.left = pos.left + "px"
+        container.style.top = pos.top + "px"
+        container.style.bottom = "auto"
+        container.style.right = "auto"
+      }
+    } catch (_) {}
+
+    // 鼠标样式提示可拖
+    container.style.cursor = "grab"
+    container.style.transition = "none"
+
+    let isDragging = false
+    let startMouseX = 0
+    let startMouseY = 0
+    let startElemX = 0
+    let startElemY = 0
+
+    container.addEventListener("mousedown", (e: MouseEvent) => {
+      // 点工具按钮、菜单、tip 气泡时不拖
+      const target = e.target as HTMLElement
+      if (target.tagName === "BUTTON" || target.closest("button")) return
+      if (target.closest(".oml2d-menus") || target.closest(".oml2d-tips")) return
+
+      isDragging = true
+      const rect = container.getBoundingClientRect()
+      startMouseX = e.clientX
+      startMouseY = e.clientY
+      startElemX = rect.left
+      startElemY = rect.top
+      container.style.cursor = "grabbing"
+      container.style.userSelect = "none"
+      e.preventDefault()
+    })
+
+    document.addEventListener("mousemove", (e: MouseEvent) => {
+      if (!isDragging) return
+      const dx = e.clientX - startMouseX
+      const dy = e.clientY - startMouseY
+      const newLeft = Math.max(0, Math.min(window.innerWidth - 50, startElemX + dx))
+      const newTop = Math.max(0, Math.min(window.innerHeight - 50, startElemY + dy))
+      container.style.left = newLeft + "px"
+      container.style.top = newTop + "px"
+      container.style.bottom = "auto"
+      container.style.right = "auto"
+    })
+
+    document.addEventListener("mouseup", () => {
+      if (!isDragging) return
+      isDragging = false
+      container.style.cursor = "grab"
+      container.style.userSelect = ""
+      // 保存位置
+      const rect = container.getBoundingClientRect()
+      try {
+        localStorage.setItem(
+          POS_STORAGE_KEY,
+          JSON.stringify({ left: rect.left, top: rect.top }),
+        )
+      } catch (_) {}
+    })
+  }
+  tryAttach()
+}
 
 function initWidget() {
-  // @ts-ignore - OML2D 由 oh-my-live2d 注入到 window
+  // @ts-ignore
   if (typeof OML2D === "undefined") return
   if (widgetInitialized) return
   widgetInitialized = true
 
   // @ts-ignore
   OML2D.loadOml2d({
-    // 模型清单 (顶部 MODELS 数组)
     models: MODELS,
-    // 浮动位置: 左下角
     dockedPosition: "left",
     docked: false,
-    // 舞台容器:缩小一点,避免挡住左侧文件列表
     sayHello: false,
     stageStyle: {
-      width: 300,
-      height: 380,
+      width: 320,
+      height: 400,
     },
-    // 全局允许拖拽
-    transitionTime: 300,
-    // 移动端隐藏 (避免挡住内容)
     mobileDisplay: false,
-    // 闲置鼓励语
     tips: {
       idleTips: {
         message: ["今天也要加油学习哦~", "记得多复习闪卡！", "保持节奏，每天前进一点点。"],
@@ -72,9 +164,11 @@ function initWidget() {
         message: { daytime: "欢迎回来", night: "夜深了,注意休息" },
       },
     },
-    // 父容器: 挂到 documentElement 而不是 body, SPA 导航时不被清除
     parentElement: document.documentElement,
   })
+
+  // 等 widget 渲染后绑定拖拽
+  setTimeout(setupDrag, 800)
 }
 
 function loadOml2dScript() {
@@ -93,16 +187,21 @@ function loadOml2dScript() {
 }
 
 document.addEventListener("nav", () => {
-  // 首次进入:加载脚本
   if (!scriptLoaded) {
     loadOml2dScript()
     return
   }
-  // 后续 SPA 导航:确保 widget 仍然存在
-  // 如果 oh-my-live2d 创建的元素被 Quartz 移除,尝试重新挂载
+  // SPA 导航:若 widget DOM 被清除则重建
   // @ts-ignore
-  if (typeof OML2D !== "undefined" && !document.getElementById("oml2d")) {
-    widgetInitialized = false
-    initWidget()
+  if (typeof OML2D !== "undefined") {
+    const exists =
+      document.querySelector("#oml2d-stage") ||
+      document.querySelector(".oml2d-stage") ||
+      document.querySelector("#oml2d")
+    if (!exists) {
+      widgetInitialized = false
+      dragSetupDone = false
+      initWidget()
+    }
   }
 })
