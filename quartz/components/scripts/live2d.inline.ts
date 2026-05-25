@@ -1,69 +1,84 @@
-// Live2D 看板娘加载脚本
-// 基于 stevenjoezhang/live2d-widget
-// 在所有页面的左下角显示一个可切换的动漫角色
+// Live2D 看板娘 - 固定初音未来模型 + 跨页面持久化
+// 基于 oh-my-live2d (更现代的封装,支持指定单一模型)
+// Miku 模型来源: npm 包 live2d-widget-model-miku
 
-const LIVE2D_BASE = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest"
-const MODEL_CDN = "https://cdn.jsdelivr.net/gh/fghrsh/live2d_api/"
+const OML2D_CDN = "https://cdn.jsdelivr.net/npm/oh-my-live2d@latest/dist/index.min.js"
+const MIKU_MODEL = "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json"
 
-let initialized = false
+let scriptLoaded = false
+let widgetInitialized = false
 
-function loadLive2D() {
-  // 注入 CSS
-  if (!document.querySelector('link[data-live2d="css"]')) {
-    const link = document.createElement("link")
-    link.rel = "stylesheet"
-    link.href = `${LIVE2D_BASE}/waifu.min.css`
-    link.setAttribute("data-live2d", "css")
-    document.head.appendChild(link)
+function initWidget() {
+  // @ts-ignore - OML2D 由 oh-my-live2d 注入到 window
+  if (typeof OML2D === "undefined") return
+  if (widgetInitialized) return
+  widgetInitialized = true
+
+  // @ts-ignore
+  OML2D.loadOml2d({
+    // 模型: 固定为 Miku
+    models: [
+      {
+        path: MIKU_MODEL,
+        scale: 0.16,
+        position: [0, 60],
+        stageStyle: { width: 280, height: 320 },
+      },
+    ],
+    // 浮动位置: 左下角
+    dockedPosition: "left",
+    docked: false,
+    // 移动端隐藏 (避免挡住内容)
+    mobileDisplay: false,
+    // 关闭欢迎语 toast 防止打扰
+    tips: {
+      idleTips: {
+        message: ["今天也要加油学习哦~", "记得多复习闪卡！", "保持节奏，每天前进一点点。"],
+        duration: 5000,
+        interval: 30000,
+      },
+      welcomeTips: {
+        message: { daytime: "欢迎回来", night: "夜深了,注意休息" },
+      },
+    },
+    // 工具栏: 仅保留隐藏按钮
+    menus: {
+      disable: false,
+      items: ["Hidden"],
+    },
+    // Logo/品牌信息隐藏,更干净
+    statusBar: { disable: true },
+    // 父容器: 挂到 documentElement 而不是 body, SPA 导航时不被清除
+    parentElement: document.documentElement,
+  })
+}
+
+function loadOml2dScript() {
+  if (scriptLoaded) return
+  scriptLoaded = true
+
+  const script = document.createElement("script")
+  script.src = OML2D_CDN
+  script.async = true
+  script.onload = initWidget
+  script.onerror = () => {
+    console.warn("[Live2D] 加载失败,可能是 CDN 暂时不可用")
+    scriptLoaded = false
   }
-
-  // 顺序加载: 先 tips, 再 live2d core
-  const tipsScript = document.createElement("script")
-  tipsScript.src = `${LIVE2D_BASE}/waifu-tips.js`
-  tipsScript.setAttribute("data-live2d", "tips")
-
-  const coreScript = document.createElement("script")
-  coreScript.src = `${LIVE2D_BASE}/live2d.min.js`
-  coreScript.setAttribute("data-live2d", "core")
-
-  let loaded = 0
-  const tryInit = () => {
-    loaded++
-    if (loaded < 2) return
-    // 两个脚本都加载完才初始化
-    // @ts-ignore - initWidget 由 waifu-tips.js 注入到 window
-    if (typeof initWidget !== "undefined") {
-      // @ts-ignore
-      initWidget({
-        waifuPath: `${LIVE2D_BASE}/waifu-tips.json`,
-        cdnPath: MODEL_CDN,
-      })
-    }
-  }
-
-  tipsScript.onload = tryInit
-  coreScript.onload = tryInit
-
-  document.body.appendChild(tipsScript)
-  document.body.appendChild(coreScript)
+  document.head.appendChild(script)
 }
 
 document.addEventListener("nav", () => {
-  if (initialized) {
-    // SPA 导航时,检查 widget DOM 是否还在;不在则重建
-    if (!document.getElementById("waifu")) {
-      // 清理可能残留的 tips 容器并重新初始化
-      // @ts-ignore
-      if (typeof initWidget !== "undefined") {
-        // @ts-ignore
-        initWidget({
-          waifuPath: `${LIVE2D_BASE}/waifu-tips.json`,
-          cdnPath: MODEL_CDN,
-        })
-      }
-    }
+  // 首次进入:加载脚本
+  if (!scriptLoaded) {
+    loadOml2dScript()
     return
   }
-  initialized = true
-  loadLive2D()
+  // 后续 SPA 导航:确保 widget 仍然存在
+  // 如果 oh-my-live2d 创建的元素被 Quartz 移除,尝试重新挂载
+  // @ts-ignore
+  if (typeof OML2D !== "undefined" && !document.getElementById("oml2d")) {
+    widgetInitialized = false
+    initWidget()
+  }
 })

@@ -5,7 +5,7 @@ import * as Component from "./quartz/components"
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [Component.Live2D()],
+  afterBody: [Component.Live2D(), Component.ClickEffect()],
   footer: Component.Footer({
     links: {
       GitHub: "https://github.com/lsy0213/quartz-study",
@@ -20,7 +20,7 @@ export const defaultContentPageLayout: PageLayout = {
       component: Component.Breadcrumbs(),
       condition: (page) => page.fileData.slug !== "index",
     }),
-    Component.ArticleTitle(),
+    // 去掉 ArticleTitle: 因为每篇 .md 自带 `# 标题`,避免重复
     Component.ContentMeta(),
     Component.TagList(),
   ],
