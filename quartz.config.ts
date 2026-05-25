@@ -35,26 +35,26 @@ const config: QuartzConfig = {
       },
       colors: {
         lightMode: {
-          light: "#fdfaf4",          // 米黄底色,温暖不刺眼
-          lightgray: "#e8e0d2",      // 边框,与底色协调
-          gray: "#a89c8a",           // 次要文字
-          darkgray: "#3c3a36",       // 正文
-          dark: "#1f1d1a",           // 标题
-          secondary: "#8b5a3c",      // 主题色:复古棕红 (链接/强调)
-          tertiary: "#c97b5a",       // 辅助色:暖橘 (悬停/活动)
-          highlight: "rgba(201, 123, 90, 0.12)",  // wikilink 卡片背景
-          textHighlight: "#f5d76e88",             // 文字高亮
+          light: "#fcfdfc",          // 几乎纯白,带极轻冷调
+          lightgray: "#e4ebe6",      // 边框/分隔线
+          gray: "#9aa8a0",           // 次要文字
+          darkgray: "#3a443e",       // 正文
+          dark: "#1a201c",           // 标题
+          secondary: "#3f8a6b",      // 主题色:清新深绿 (链接/强调)
+          tertiary: "#7cc4a3",       // 辅助色:嫩绿 (悬停/装饰)
+          highlight: "rgba(124, 196, 163, 0.13)",  // 淡绿色背景填充
+          textHighlight: "#b8f0c688",              // 荧光绿高亮
         },
         darkMode: {
-          light: "#1a1a1f",
-          lightgray: "#2e2e36",
-          gray: "#6b6b75",
-          darkgray: "#d8d3c5",
-          dark: "#f5f0e6",
-          secondary: "#d4a574",      // 暖金色
-          tertiary: "#e8b896",
-          highlight: "rgba(212, 165, 116, 0.15)",
-          textHighlight: "#d4a57466",
+          light: "#161a17",
+          lightgray: "#2a302c",
+          gray: "#6a756f",
+          darkgray: "#d4dcd7",
+          dark: "#f0f4f1",
+          secondary: "#8fd1ad",      // 柔和绿
+          tertiary: "#a8d8be",
+          highlight: "rgba(143, 209, 173, 0.13)",
+          textHighlight: "#8fd1ad55",
         },
       },
     },
