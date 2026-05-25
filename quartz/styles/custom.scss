@@ -40,14 +40,12 @@ article h1 {
   border-bottom: 2px solid var(--secondary);
 }
 
-// h2 用淡绿色背景做主标题强调
+// h2: 仅左侧绿色装饰条,无背景
 article h2 {
   font-size: 1.55rem;
   margin-top: 2em;
-  padding: 0.35em 0.7em;
-  background: var(--highlight);
-  border-left: 3px solid var(--secondary);
-  border-radius: 0 5px 5px 0;
+  padding-left: 0.65em;
+  border-left: 4px solid var(--secondary);
   color: var(--dark);
 }
 
