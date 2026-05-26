@@ -4,20 +4,25 @@
 const OML2D_CDN = "https://cdn.jsdelivr.net/npm/oh-my-live2d@latest/dist/index.min.js"
 
 // ============================================================
-//  Cubism 4 官方示例模型 (https://github.com/Live2D/CubismWebSamples)
-//  这些是 Live2D 官方免费发布的高质量模型,与 oh-my-live2d 完全兼容
+//  当前模型:纳西妲 (本地托管于 quartz/static/live2d/Nahida/)
+//  备用:Cubism 4 官方示例 (https://github.com/Live2D/CubismWebSamples)
 // ============================================================
 const SAMPLE_BASE =
   "https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources"
 
 const MODELS = [
   {
-    name: "Hiyori - 双马尾水手服少女",
-    path: `${SAMPLE_BASE}/Hiyori/Hiyori.model3.json`,
-    scale: 0.18,
-    position: [0, 100] as [number, number],
+    name: "Nahida - 纳西妲 (原神)",
+    path: "/static/live2d/Nahida/Nahida.model3.json",
+    scale: 0.12,
+    position: [0, 80] as [number, number],
   },
-  // 其它官方模型 - 取消注释来切换:
+  // 备选官方模型 - 取消注释来切换:
+  // {
+  //   name: "Hiyori - 双马尾水手服少女",
+  //   path: `${SAMPLE_BASE}/Hiyori/Hiyori.model3.json`,
+  //   scale: 0.18, position: [0, 100] as [number, number],
+  // },
   // {
   //   name: "Haru - 学院风长发少女 (官方)",
   //   path: `${SAMPLE_BASE}/Haru/Haru.model3.json`,
@@ -31,11 +36,6 @@ const MODELS = [
   // {
   //   name: "Natori - 和风少女",
   //   path: `${SAMPLE_BASE}/Natori/Natori.model3.json`,
-  //   scale: 0.16, position: [0, 80] as [number, number],
-  // },
-  // {
-  //   name: "Mark - 男生 (供参考)",
-  //   path: `${SAMPLE_BASE}/Mark/Mark.model3.json`,
   //   scale: 0.16, position: [0, 80] as [number, number],
   // },
 ]
