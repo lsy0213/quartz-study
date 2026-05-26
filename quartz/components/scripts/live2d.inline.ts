@@ -4,36 +4,39 @@
 const OML2D_CDN = "https://cdn.jsdelivr.net/npm/oh-my-live2d@latest/dist/index.min.js"
 
 // ============================================================
-//  模型库 — 第一个是默认模型,如果配多个会出现切换按钮
-//  当前选用 chitose (黑发学院风) - 比 Miku 装扮更精细
+//  Cubism 4 官方示例模型 (https://github.com/Live2D/CubismWebSamples)
+//  这些是 Live2D 官方免费发布的高质量模型,与 oh-my-live2d 完全兼容
 // ============================================================
+const SAMPLE_BASE =
+  "https://cdn.jsdelivr.net/gh/Live2D/CubismWebSamples@master/Samples/Resources"
+
 const MODELS = [
   {
-    name: "Chitose - 黑发学院",
-    path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-chitose@1.0.5/assets/chitose.model.json",
-    scale: 0.5,
-    position: [0, 50] as [number, number],
+    name: "Hiyori - 双马尾水手服少女",
+    path: `${SAMPLE_BASE}/Hiyori/Hiyori.model3.json`,
+    scale: 0.18,
+    position: [0, 100] as [number, number],
   },
-  // 备选模型 - 想换就把当前模型注释掉、把想要的取消注释
+  // 其它官方模型 - 取消注释来切换:
   // {
-  //   name: "Epsilon - 银发机娘",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-epsilon2_1@1.0.5/assets/Epsilon2.1.model.json",
-  //   scale: 0.6, position: [0, 60] as [number, number],
+  //   name: "Haru - 学院风长发少女 (官方)",
+  //   path: `${SAMPLE_BASE}/Haru/Haru.model3.json`,
+  //   scale: 0.16, position: [0, 80] as [number, number],
   // },
   // {
-  //   name: "Miku - 初音未来",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-miku@1.0.5/assets/miku.model.json",
-  //   scale: 0.24, position: [0, 40] as [number, number],
+  //   name: "Mao - 猫耳少女",
+  //   path: `${SAMPLE_BASE}/Mao/Mao.model3.json`,
+  //   scale: 0.16, position: [0, 80] as [number, number],
   // },
   // {
-  //   name: "Haru - 白发猫耳",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-haru@1.0.5/assets/haru01.model.json",
-  //   scale: 0.5, position: [0, 60] as [number, number],
+  //   name: "Natori - 和风少女",
+  //   path: `${SAMPLE_BASE}/Natori/Natori.model3.json`,
+  //   scale: 0.16, position: [0, 80] as [number, number],
   // },
   // {
-  //   name: "Nietzsche - 哲学少女",
-  //   path: "https://cdn.jsdelivr.net/npm/live2d-widget-model-nietzsche@1.0.5/assets/nietzsche.model.json",
-  //   scale: 0.5, position: [0, 50] as [number, number],
+  //   name: "Mark - 男生 (供参考)",
+  //   path: `${SAMPLE_BASE}/Mark/Mark.model3.json`,
+  //   scale: 0.16, position: [0, 80] as [number, number],
   // },
 ]
 
